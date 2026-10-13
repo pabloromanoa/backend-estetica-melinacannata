@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: estetica
+          MYSQL_USER: estetica
+          MYSQL_PASSWORD: estetica
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-interval=5s --health-retries=20
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_NAME: estetica
+      JWT_SECRET: ci-secret-0123456789-abcdefghijklmnopqrstuvwxyz
+      ADMIN_EMAIL: admin@ci.test
+      ADMIN_PASSWORD: Admin-ci-12345
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:cov
+      - run: npm run build
+      - run: npm run test:e2e
+
+  laya-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: laya-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q

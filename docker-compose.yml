@@ -1,0 +1,50 @@
+# Entorno local de desarrollo.
+#   docker compose up -d mysql laya     → sólo dependencias (backend con `npm run start:dev`)
+#   docker compose up -d                → todo (backend en contenedor)
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: estetica
+      MYSQL_USER: estetica
+      MYSQL_PASSWORD: estetica
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-proot']
+      interval: 5s
+      retries: 20
+
+  laya:
+    build: ./laya-service
+    restart: unless-stopped
+    # Sólo se publica en localhost para desarrollo; en producción NO exponer.
+    ports:
+      - '127.0.0.1:8000:8000'
+
+  backend:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+      LAYA_URL: http://laya:8000
+      RECEIPTS_STORAGE_DIR: /app/storage/receipts
+    ports:
+      - '3000:3000'
+    volumes:
+      - receipts:/app/storage/receipts
+    depends_on:
+      mysql:
+        condition: service_healthy
+      laya:
+        condition: service_started
+
+volumes:
+  mysql-data:
+  receipts:
