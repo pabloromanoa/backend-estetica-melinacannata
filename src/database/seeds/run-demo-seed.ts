@@ -96,6 +96,7 @@ async function main(): Promise<void> {
       categoryIds: string[],
       providerIds: string[],
       recommendationTags: string[],
+      image: string,
       prepMinutes = 10,
       cleanupMinutes = 10,
     ) =>
@@ -110,25 +111,26 @@ async function main(): Promise<void> {
         providerIds,
         recommendationTags,
         specificDates: [],
+        imageUrl: image
       });
 
     const melinaIds = melina ? [melina.id] : [];
     const limpieza = await svc('Limpieza Facial Profunda', 60, 25000, [faciales], melinaIds, [
       'limpieza',
       'apariencia',
-    ]);
+    ], 'https://images.unsplash.com/photo-1761718209708-9ab9ba1c7252?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
     const peeling = await svc('Peeling Químico', 45, 30000, [faciales], melinaIds, [
       'apariencia',
       'limpieza',
-    ]);
+    ], 'https://images.unsplash.com/photo-1761718209835-c8586b7dcac0?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
     const hidratacion = await svc('Hidratación Facial', 50, 22000, [faciales], melinaIds, [
       'hidratacion',
-    ]);
-    await svc('Mesoterapia', 45, 35000, [faciales], melinaIds, ['apariencia', 'tonificacion']);
-    await svc('Manicuría Rusa + Semipermanente', 90, 22000, [unas], [camila.id], ['apariencia']);
-    await svc('Kapping Gel', 75, 18000, [unas], [camila.id], ['apariencia']);
-    await svc('Belleza de Pies Spa', 60, 20000, [unas], [camila.id], ['relajacion', 'hidratacion']);
-    await svc('Esculpidas en Polygel', 120, 28000, [unas], [camila.id], ['apariencia'], 10, 15);
+    ], 'https://images.unsplash.com/photo-1643684391140-c5056cfd3436?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
+    await svc('Mesoterapia', 45, 35000, [faciales], melinaIds, ['apariencia', 'tonificacion'], 'https://images.unsplash.com/photo-1761819920857-7edc5e808fd3?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
+    await svc('Manicuría Rusa + Semipermanente', 90, 22000, [unas], [camila.id], ['apariencia'], 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
+    await svc('Kapping Gel', 75, 18000, [unas], [camila.id], ['apariencia'], 'https://images.unsplash.com/photo-1690749138086-7422f71dc159?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
+    await svc('Belleza de Pies Spa', 60, 20000, [unas], [camila.id], ['relajacion', 'hidratacion'], 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com');
+    await svc('Esculpidas en Polygel', 120, 28000, [unas], [camila.id], ['apariencia'], 'https://images.unsplash.com/photo-1613457492120-4fcfbb7c3a5b?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com', 10, 15);
     await svc(
       'Masaje Descontracturante',
       60,
@@ -136,6 +138,7 @@ async function main(): Promise<void> {
       [masajes],
       [valeria.id],
       ['relajacion'],
+      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com',
       5,
       10,
     );
@@ -146,10 +149,11 @@ async function main(): Promise<void> {
       [masajes],
       [valeria.id],
       ['tonificacion', 'relajacion'],
+      'https://images.unsplash.com/photo-1617952986600-802f965dcdbc?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com',
       5,
       10,
     );
-    await svc('Control Nutricional', 45, 15000, [nutricion], [sofia.id], ['tonificacion'], 0, 5);
+    await svc('Control Nutricional', 45, 15000, [nutricion], [sofia.id], ['tonificacion'], 'https://images.unsplash.com/photo-1574400901674-b28bb483afc3?auto=format&fit=crop&w=1200&h=675&q=80&utm_source=chatgpt.com', 0, 5);
 
     await treatments.create({
       name: 'Tratamiento Facial Integral',
